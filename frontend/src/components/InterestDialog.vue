@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { fetchInterests, saveInterests, errorMessage } from '../api'
+import { genreLabel } from '../recommendations'
 
 const props = defineProps<{ open: boolean }>()
 const emit = defineEmits<{ close: []; saved: [genres: string[]] }>()
@@ -63,7 +64,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
         <div class="interest-chips" role="group" aria-label="可选电影类型">
           <button v-for="genre in selectable" :key="genre" type="button" class="interest-chip"
             :class="{ selected: selected.includes(genre) }" :aria-pressed="selected.includes(genre)"
-            :disabled="!selected.includes(genre) && selected.length >= 8" @click="toggle(genre)">{{ genre }}</button>
+            :disabled="!selected.includes(genre) && selected.length >= 8" @click="toggle(genre)">{{ genreLabel(genre) }}</button>
         </div>
         <p class="interest-count" role="status">已选 {{ selected.length }} / 8</p>
         <p v-if="!canConfirm" class="form-hint">请选择 1-8 个感兴趣的类型</p>

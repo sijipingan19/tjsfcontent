@@ -1,0 +1,31 @@
+{
+  "algorithm": "popular",
+  "model_version": "popular-v1",
+  "runtime_mode": "business",
+  "dataset_version": "rec-course-v3-train5-1.0.0",
+  "split_version": "temporal-v1-cold500-train5-v3",
+  "schema_version": "student-eight-v3",
+  "manifest_sha256": "fcfb9a195a56709773696aab02f769c691778af0eb433a1e0778a71c4b289b9e",
+  "training_files": {
+    "business/history_ratings.csv": "b73992a5390d668e80d777bc7425404dd3a850dd5b7eaad5abc7f4cac21ff438"
+  },
+  "feature_files": {
+    "training-catalog.csv": "3fbb145fdaad3f66e3ca17d0e1c32f385a90c1a465c6a905f17be9fc6a08460c"
+  },
+  "artifacts": {
+    "model.npz": "93d9b19ce5daec783d13737c3337a7a280259e952c6b4c6fb258d1158793d102"
+  },
+  "parameters": {
+    "bayesian_prior_count": 20.0,
+    "positive_threshold": 4.0,
+    "training_rows": 798775,
+    "training_users": 5000,
+    "catalog_count": 8459,
+    "tie_break": "numeric_movie_id_ascending"
+  },
+  "tool_versions": {
+    "python": "3.11.16",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1"
+  }
+}
