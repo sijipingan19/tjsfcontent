@@ -11,6 +11,7 @@ from .evaluation_summary import load_summary, SummaryNotReady, SummaryInvalid
 from .errors import APIError
 from .schemas import IdPath, Input, identifier
 from .security import ActorDependency
+from .interests import current_interests
 
 router = APIRouter(tags=["学生算法预留边界"])
 
@@ -19,10 +20,10 @@ class RecommendationQuery(Input):
     limit: int = Field(default=10, ge=1, le=50)
 
 
-def invoke(algorithm: Algorithm, kind: str, uid: int, limit: int):
+def invoke(algorithm: Algorithm, kind: str, uid: int, limit: int, context: dict | None = None):
     request = RecommendationRequest(kind, uid, limit, "business", DATASET, SPLIT)
     try:
-        return recommend(algorithm, request)
+        return recommend(algorithm, request, context)
     except AlgorithmNotImplemented:
         raise APIError(501, "ALGORITHM_NOT_IMPLEMENTED", "此推荐算法留给学生实现", {
             "status": "not_implemented", "algorithm": algorithm.value, "subject_key": kind + ":" + str(uid),
@@ -55,8 +56,10 @@ def evaluations():
 
 
 @router.get("/me/recommendations/{algorithm}", response_model=RecommendationResult)
-def my_recommendations(algorithm: Algorithm, actor: ActorDependency, query: Annotated[RecommendationQuery, Query()]):
-    return invoke(algorithm, "app", actor.account_id, query.limit)
+def my_recommendations(algorithm: Algorithm, actor: ActorDependency, request: Request,
+                       query: Annotated[RecommendationQuery, Query()]):
+    return invoke(algorithm, "app", actor.account_id, query.limit,
+                  {"interest_genres": current_interests(request)})
 
 
 @router.get("/demo/history-users/{ml_user_id}/recommendations/{algorithm}", response_model=RecommendationResult)

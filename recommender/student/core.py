@@ -39,6 +39,17 @@ def content_scores(movie_ids, features, ratings):
     return features @ (profile / norm) if norm > 0 else None
 
 
+def interest_scores(movie_ids, features, genres, interest_genres):
+    """零行为新用户：按注册时选择的兴趣类型构造均匀画像，与电影类型向量做余弦。"""
+    columns = {str(g): i for i, g in enumerate(genres)}
+    picked = [columns[g] for g in dict.fromkeys(interest_genres) if isinstance(g, str) and g in columns]
+    if not picked:
+        return None
+    profile = np.zeros(features.shape[1])
+    profile[picked] = 1.0 / len(picked)
+    return features @ profile
+
+
 def fit_itemcf(movie_ids, ratings, top_k=80, shrinkage=20.0):
     """正反馈二值共现；cosine×共现/(共现+shrinkage)，逐源电影保留Top邻居。"""
     from scipy import sparse

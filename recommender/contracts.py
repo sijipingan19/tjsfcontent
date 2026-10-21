@@ -63,7 +63,7 @@ class AlgorithmNotImplemented(Exception):
 PROVIDERS: dict[Algorithm, Recommender] = {}
 
 
-def recommend(algorithm: Algorithm, request: RecommendationRequest) -> RecommendationResult:
+def recommend(algorithm: Algorithm, request: RecommendationRequest, context: dict | None = None) -> RecommendationResult:
     provider = PROVIDERS.get(algorithm)
     if provider is None:
         raise AlgorithmNotImplemented(algorithm.value)
@@ -76,7 +76,11 @@ def recommend(algorithm: Algorithm, request: RecommendationRequest) -> Recommend
             "已注册Provider须指定model_manifest_path", "MODEL_BINDING_INVALID")
     data = FrozenData()
     model = check_model(model_path, request.runtime_mode, algorithm.value, data)
-    return check_result(provider.recommend(request), request, algorithm, data.catalog(), model.model_version)
+    import inspect
+    params = inspect.signature(provider.recommend).parameters
+    accepts_context = len(params) >= 2 or any(p.kind is p.VAR_KEYWORD for p in params.values())
+    raw = provider.recommend(request, context) if accepts_context else provider.recommend(request)
+    return check_result(raw, request, algorithm, data.catalog(), model.model_version)
 
 
 # 学生实现：只注册延迟加载实例；导入不训练、不读模型、不访问数据库。

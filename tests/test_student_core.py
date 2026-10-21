@@ -28,6 +28,22 @@ class CoreTests(unittest.TestCase):
         self.assertAlmostEqual(drama[3], 1.0)
         self.assertIsNone(core.content_scores(ids, features, {'1': 3.5}))
 
+    def test_interest_scores_builds_profile_from_selected_genres(self):
+        from recommender.student import core
+        self.assertTrue(hasattr(core, 'interest_scores'), '缺少兴趣画像冷启动实现')
+        ids = ['1', '2', '3', '10']
+        features, genres = core.fit_genres(ids, {'1': 'Action', '2': 'Drama', '3': 'Action|Drama', '10': 'Horror'})
+        scores = core.interest_scores(ids, features, genres, ['Action', 'Drama'])
+        self.assertAlmostEqual(scores[2], 2 ** 0.5 / 2)  # 覆盖两种兴趣的电影最高（行已L2归一化）
+        self.assertAlmostEqual(scores[0], 0.5)          # 只覆盖Action
+        self.assertAlmostEqual(scores[1], 0.5)          # 只覆盖Drama
+        self.assertEqual(scores[3], 0.0)                # Horror不相关
+        self.assertGreater(scores[2], max(scores[0], scores[1]))
+        dedup = core.interest_scores(ids, features, genres, ['Action', 'Drama', 'Action'])
+        self.assertTrue((dedup == scores).all())        # 重复选择去重
+        self.assertIsNone(core.interest_scores(ids, features, genres, ['Unknown']))
+        self.assertIsNone(core.interest_scores(ids, features, genres, []))
+
     def test_itemcf_binary_positive_cosine_shrinkage_and_neighbors(self):
         from recommender.student import core
         self.assertTrue(hasattr(core, 'fit_itemcf'), '缺少真实正反馈共现拟合')

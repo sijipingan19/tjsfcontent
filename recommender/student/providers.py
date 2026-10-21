@@ -45,19 +45,22 @@ class StudentProvider:
         self._arrays = arrays
         self._model = model
 
-    def recommend(self, request):
+    def recommend(self, request, context=None):
         check_request(request)
         require(request.runtime_mode == 'business', '评价必须显式注入允许的历史', 'DATA_MODE_INVALID')
         from recommender.business import read_history
         history = read_history(request)
-        return self.recommend_history(request, {row.movie_id: float(row.rating) for row in history.ratings})
+        interests = [g for g in ((context or {}).get('interest_genres') or []) if isinstance(g, str)]
+        return self.recommend_history(request, {row.movie_id: float(row.rating) for row in history.ratings},
+                                      interest_genres=interests)
 
-    def recommend_history(self, request, ratings: dict[str, float], excluded: set[str] | None = None):
+    def recommend_history(self, request, ratings: dict[str, float], excluded: set[str] | None = None,
+                          interest_genres: list[str] | None = None):
         """无DB离线入口：画像只用ratings，excluded仅用于过滤，不能进入拟合或画像。"""
         from datetime import datetime, timezone
         import numpy as np
         from recommender.contracts import Algorithm, RecommendationItem, RecommendationResult
-        from .core import content_scores, itemcf_scores, rank_scores
+        from .core import content_scores, interest_scores, itemcf_scores, rank_scores
         check_request(request)
         self._load(request.runtime_mode)
         arrays = self._arrays
@@ -82,6 +85,9 @@ class StudentProvider:
             if scores is None:
                 scores = content_scores(ids, arrays['genre_features'], ratings)
                 source = 'cold_start:content_few_positive_ratings'
+            if scores is None and interest_genres:
+                scores = interest_scores(ids, arrays['genre_features'], arrays['genres'], interest_genres)
+                source = 'cold_start:interest_genre_profile'
         elif self.algorithm == 'als':
             scores, source = self._als_scores(request, ratings)
         if self.algorithm != 'popular' and scores is not None and self.algorithm != 'als':
@@ -99,7 +105,9 @@ class StudentProvider:
         items = []
         for rank, (mid, score) in enumerate(ranked, 1):
             sources = [source]
-            if source.startswith(('content:', 'itemcf:', 'cold_start:')):
+            if source == 'cold_start:interest_genre_profile':
+                sources.append('profile:interest_genres')
+            elif source.startswith(('content:', 'itemcf:', 'cold_start:')):
                 sources.append('profile:explicit_ratings_ge_4')
             items.append(RecommendationItem(movie_id=mid, rank=rank, algorithm=algorithm,
                          model_version=version, score=score, recall_sources=sources, recall_ranks={source: rank}))
