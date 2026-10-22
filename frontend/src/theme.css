@@ -1,0 +1,103 @@
+:root,html.dark {
+  color-scheme:light;
+  --bg:linear-gradient(160deg,#87CEEB,#64B5F6 60%,#42A5F5);
+  --surface:#eef7fd;
+  --text:#16303e;
+  --muted:#4c6b7a;
+  --border:#b9d6ea;
+  --accent:#9a6b1f;
+  --accent-tint:#9a6b1f12;
+  --ink:#fffaf0;
+  --danger:#b03a2e;
+  --el-color-primary:#9a6b1f;
+  --el-color-primary-light-3:#b58a47;
+  --el-color-primary-light-5:#c9ad72;
+  --el-color-primary-light-7:#e0d3ac;
+  --el-color-primary-light-8:#ece3c8;
+  --el-color-primary-light-9:#f6f1e2;
+  --el-color-primary-dark-2:#7d5718;
+  --el-bg-color:#ffffff;
+  --el-bg-color-page:#eaf6fd;
+  --el-bg-color-overlay:#ffffff;
+  --el-fill-color-blank:#ffffff;
+  --el-fill-color:#eef6fc;
+  --el-fill-color-light:#f2f8fd;
+  --el-fill-color-lighter:#f7fbfe;
+  --el-text-color-primary:#16303e;
+  --el-text-color-regular:#2c4a5a;
+  --el-text-color-secondary:#4c6b7a;
+  --el-text-color-placeholder:#7a99a8;
+  --el-border-color:#b9d6ea;
+  --el-border-color-light:#cfe3f1;
+  --el-border-color-lighter:#e0edf6;
+  --el-mask-color:#0009;
+  --el-color-danger:#b03a2e;
+  --el-font-family:Inter,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --el-border-radius-base:6px;
+  --el-disabled-text-color:#9db4c0
+}
+
+
+.el-button--primary {
+  --el-button-text-color:var(--ink);
+  --el-button-hover-text-color:var(--ink);
+  --el-button-active-text-color:var(--ink);
+  --el-button-disabled-text-color:#12231e
+}
+
+.el-input,.el-select,.el-input-number {
+  --el-component-size-large:44px
+}
+
+.el-input__wrapper,.el-select__wrapper {
+  min-height:44px
+}
+
+.el-form-item__label {
+  color:var(--text)!important;
+  font-size:13px
+}
+
+.el-tabs__item.is-active,.el-tabs__item:hover {
+  color:var(--accent)
+}
+
+.el-tabs__active-bar {
+  background:var(--accent)
+}
+
+.el-pagination.is-background .el-pager li.is-active {
+  color:var(--ink)
+}
+
+.el-table {
+  --el-table-header-bg-color:#e6f0f7;
+  --el-table-tr-bg-color:var(--surface);
+  --el-table-row-hover-bg-color:#dcebf3;
+  --el-table-border-color:var(--border);
+  --el-table-header-text-color:var(--muted);
+  font-size:13px
+}
+
+.el-table .cell {
+  padding-block:7px
+}
+
+.el-input-number {
+  width:160px
+}
+
+.el-button:focus-visible {
+  outline:2px solid var(--accent);
+  outline-offset:3px
+}
+
+.el-message {
+  max-width:calc(100vw - 32px)
+}
+
+.el-tag {
+  --el-tag-text-color:var(--muted);
+  --el-tag-border-color:var(--border);
+  --el-tag-bg-color:var(--surface)
+}
