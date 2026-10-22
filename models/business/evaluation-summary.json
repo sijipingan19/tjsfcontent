@@ -1,0 +1,70 @@
+{
+  "status": "completed",
+  "dataset_version": "rec-course-v3-train5-1.0.0",
+  "split_version": "temporal-v1-cold500-train5-v3",
+  "generated_at": "2026-10-22T06:29:02.112413+00:00",
+  "coverage_definition": "coverage_at_10 = distinct recommended movies / frozen catalog size 8459; user_coverage_at_10 = users with nonempty recommendations / all fixed eligible users",
+  "metrics_definition": "macro P@10 (denominator always 10), macro R@10 (candidate relevant targets); all fixed users retained, including empty and short lists",
+  "items": [
+    {
+      "algorithm": "popular",
+      "partition": "validation",
+      "model_version": "popular-v1",
+      "user_count": 4209,
+      "precision_at_10": 0.034164884770729,
+      "recall_at_10": 0.05778843361821381,
+      "coverage_at_10": 0.015722898687788155,
+      "user_coverage_at_10": 1.0,
+      "unique_recommended_movies": 133,
+      "empty_users": 0,
+      "average_list_length": 10.0,
+      "task_sha256": "8a802dbf621ae9ab3ba7fa62245a08c3d0d2016b52d1914240f8b174433c81a2",
+      "model_manifest_sha256": "413c32373e437130bad76575a3a8066355a8311810f9f405168e5da12b8b37c2"
+    },
+    {
+      "algorithm": "content",
+      "partition": "validation",
+      "model_version": "content-v1",
+      "user_count": 4209,
+      "precision_at_10": 0.004252791636968398,
+      "recall_at_10": 0.008138892467151524,
+      "coverage_at_10": 0.19777751507270364,
+      "user_coverage_at_10": 1.0,
+      "unique_recommended_movies": 1673,
+      "empty_users": 0,
+      "average_list_length": 10.0,
+      "task_sha256": "8a802dbf621ae9ab3ba7fa62245a08c3d0d2016b52d1914240f8b174433c81a2",
+      "model_manifest_sha256": "a5b3d6f0983aaa69fe4d932741ca67bf9c1f3d488eeaca4ae1e416769a3cb52a"
+    },
+    {
+      "algorithm": "itemcf",
+      "partition": "validation",
+      "model_version": "itemcf-v1",
+      "user_count": 4209,
+      "precision_at_10": 0.051057258256116955,
+      "recall_at_10": 0.09175886900510512,
+      "coverage_at_10": 0.04586830594632935,
+      "user_coverage_at_10": 1.0,
+      "unique_recommended_movies": 388,
+      "empty_users": 0,
+      "average_list_length": 10.0,
+      "task_sha256": "8a802dbf621ae9ab3ba7fa62245a08c3d0d2016b52d1914240f8b174433c81a2",
+      "model_manifest_sha256": "502e9b08b539241545ab4fa2df31268ae03d26153a1c5a64bd47c622bf82a384"
+    },
+    {
+      "algorithm": "als",
+      "partition": "validation",
+      "model_version": "als-v1",
+      "user_count": 4209,
+      "precision_at_10": 0.010287479211214132,
+      "recall_at_10": 0.01846879784961982,
+      "coverage_at_10": 0.5382432911691689,
+      "user_coverage_at_10": 1.0,
+      "unique_recommended_movies": 4553,
+      "empty_users": 0,
+      "average_list_length": 10.0,
+      "task_sha256": "8a802dbf621ae9ab3ba7fa62245a08c3d0d2016b52d1914240f8b174433c81a2",
+      "model_manifest_sha256": "ed2036ac5d75effbb9d699e2cf5ec58e191d1e5212fffef35ea94ce75ad2f1c2"
+    }
+  ]
+}

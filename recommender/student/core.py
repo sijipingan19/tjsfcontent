@@ -2,17 +2,18 @@
 import numpy as np
 
 
-def fit_popular(movie_ids, ratings, prior=20.0):
-    """用全局均分作先验，评分数量作支持度的 Bayesian 加权评分。"""
+def fit_popular(movie_ids, ratings, positive_threshold=4.0):
+    """按训练集正反馈（rating≥threshold）数量排序的热门基线；counts 返回总评分数用于解释。"""
     index = {mid: i for i, mid in enumerate(movie_ids)}
     counts = np.zeros(len(movie_ids), dtype=np.int64)
-    sums = np.zeros(len(movie_ids), dtype=np.float64)
+    positive = np.zeros(len(movie_ids), dtype=np.float64)
     for _, mid, rating in ratings:
         if mid in index:
-            counts[index[mid]] += 1
-            sums[index[mid]] += float(rating)
-    mean = float(sums.sum() / counts.sum()) if counts.sum() else 0.0
-    return (sums + prior * mean) / (counts + prior), counts
+            position = index[mid]
+            counts[position] += 1
+            if float(rating) >= positive_threshold:
+                positive[position] += 1.0
+    return positive, counts
 
 
 def fit_genres(movie_ids, movie_genres):

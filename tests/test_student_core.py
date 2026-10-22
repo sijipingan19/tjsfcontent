@@ -4,14 +4,15 @@ import unittest
 
 
 class CoreTests(unittest.TestCase):
-    def test_popular_bayesian_support_and_numeric_ties(self):
+    def test_popular_positive_support_and_numeric_ties(self):
         self.assertIsNotNone(importlib.util.find_spec('recommender.student.core'), '尚未实现真实推荐核心')
         from recommender.student.core import fit_popular, rank_scores
         ids = ['1', '2', '10']
         rows = ([('u1', '1', 5.0)] + [(f'u{i}', '2', 4.5) for i in range(10)]
                 + [(f'background{i}', '10', 3.0) for i in range(100)])
-        scores, counts = fit_popular(ids, rows, prior=10.0)
-        self.assertGreater(scores[1], scores[0])
+        scores, counts = fit_popular(ids, rows, positive_threshold=4.0)
+        self.assertGreater(scores[1], scores[0])   # 正反馈数量 10 > 1
+        self.assertEqual(scores[2], 0.0)           # 100 条中性评分不构成热门
         self.assertEqual(counts.tolist(), [1, 10, 100])
         self.assertEqual(rank_scores(['10', '2', '1'], [1, 1, 1], {'1'}, 10), [('2', 1.0), ('10', 1.0)])
 
@@ -95,7 +96,7 @@ class CoreTests(unittest.TestCase):
                     self.assertEqual(action.items[0].movie_id, '3')
                     self.assertEqual(drama.items[0].movie_id, '10')
 
-    def test_als_real_factors_ml_identity_and_app_ridge_fold_in(self):
+    def test_als_real_factors_ml_cosine_and_app_ridge_fold_in(self):
         from recommender.student.providers import StudentProvider
         self.assertTrue(hasattr(StudentProvider, '_als_scores'), '缺少ALS真实因子推断')
         from recommender.contracts import RecommendationRequest
@@ -110,11 +111,15 @@ class CoreTests(unittest.TestCase):
             provider = StudentProvider('als', path)
             ml = RecommendationRequest('ml', 1, 1, 'business', DATASET, SPLIT)
             app = RecommendationRequest('app', 1, 1, 'business', DATASET, SPLIT)
-            self.assertEqual(provider.recommend_history(ml, {'1': 5}).items[0].movie_id, '10')
+            result_ml = provider.recommend_history(ml, {'1': 5})
+            # 用户因子[0,1]与电影归一化因子余弦：'2'与'10'同为1.0，按数值ID升序取'2'
+            self.assertEqual(result_ml.items[0].movie_id, '2')
+            self.assertAlmostEqual(result_ml.items[0].score, 1.0)
+            self.assertIn('als:trained_user_factor_cosine', result_ml.items[0].recall_sources)
             result = provider.recommend_history(app, {'1': 5})
             self.assertEqual(result.items[0].movie_id, '3')
-            self.assertAlmostEqual(result.items[0].score, 10 / 1.1)
-            self.assertIn('als:ridge_fold_in', result.items[0].recall_sources)
+            self.assertAlmostEqual(result.items[0].score, 1.0)
+            self.assertIn('als:ridge_fold_in_cosine', result.items[0].recall_sources)
             self.assertIn('popular_fallback:no_positive_profile', provider.recommend_history(app, {}).items[0].recall_sources)
             with self.assertRaises(ContractError) as caught:
                 StudentProvider('als', Path(tmp) / 'missing.json').recommend_history(app, {})

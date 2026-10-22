@@ -13,10 +13,10 @@
     "training-catalog.csv": "3fbb145fdaad3f66e3ca17d0e1c32f385a90c1a465c6a905f17be9fc6a08460c"
   },
   "artifacts": {
-    "model.npz": "93d9b19ce5daec783d13737c3337a7a280259e952c6b4c6fb258d1158793d102"
+    "model.npz": "af6a5683522df4a1588d049b2c589a4b6f0c77f89b0ec8cff5a5fb4247cef256"
   },
   "parameters": {
-    "bayesian_prior_count": 20.0,
+    "ranking": "positive_support_desc",
     "positive_threshold": 4.0,
     "training_rows": 798775,
     "training_users": 5000,

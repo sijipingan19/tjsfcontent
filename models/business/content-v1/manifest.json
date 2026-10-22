@@ -14,7 +14,7 @@
     "movies.csv": "99f7951a528890bc6ca088b65987790e926adc8f595971346b5b606e4c71454e"
   },
   "artifacts": {
-    "model.npz": "d6faed825dd9c0295e070c630032d4f7cfcec13cdb5a995a16bdfe23a26ea965"
+    "model.npz": "2873dfb3a79a87d6ebd05749a64de32c204321ace0cc4c3737083b272c0f6209"
   },
   "parameters": {
     "encoding": "row_l2_normalized_multihot",

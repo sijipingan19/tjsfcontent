@@ -69,7 +69,7 @@ class StudentProvider:
         excluded = set(excluded or ()) | set(ratings)
         require(all(isinstance(mid, str) and np.isfinite(value) and 0.5 <= float(value) <= 5.0
                     for mid, value in ratings.items()), '评分字典非法', 'REQUEST_CONTEXT_INVALID')
-        source = 'popular:bayesian_rating_support'
+        source = 'popular:positive_support_rank'
         scores = None
         if self.algorithm == 'content':
             scores = content_scores(ids, arrays['genre_features'], ratings)
@@ -126,11 +126,14 @@ class StudentProvider:
         require(items.ndim == users.ndim == 2 and items.shape[0] == len(ids) and
                 users.shape == (len(user_ids), items.shape[1]) and items.shape[1] > 0 and
                 user_ids == sorted(set(user_ids), key=int), 'ALS因子维度/用户ID非法', 'MODEL_BINDING_INVALID')
-        if not any(mid in index and float(value) >= 4.0 for mid, value in ratings.items()):
+        if any(mid in index and float(value) >= 4.0 for mid, value in ratings.items()) is False:
             return None, 'popular_fallback:no_positive_profile'
+        # 余弦打分：用户因子与电影因子分别L2归一化，去掉因子模长对名次的干扰。
+        norms = np.maximum(np.linalg.norm(items, axis=1, keepdims=True), 1e-12)
+        normalized = items.astype(np.float64) / norms
         if request.subject_kind == 'ml' and str(request.subject_id) in user_ids:
-            vector = users[user_ids.index(str(request.subject_id))]
-            return items @ vector, 'als:trained_ml_user_factors'
+            vector = users[user_ids.index(str(request.subject_id))].astype(np.float64)
+            return normalized @ (vector / max(np.linalg.norm(vector), 1e-12)), 'als:trained_user_factor_cosine'
         observed = [(index[mid], float(value)) for mid, value in ratings.items() if mid in index]
         if not observed:
             return None, 'popular_fallback:no_positive_profile'
@@ -139,7 +142,7 @@ class StudentProvider:
         regularization = float(self._model.parameters.get('fold_in_regularization', 0.1))
         require(np.isfinite(regularization) and regularization > 0, 'ALS fold-in正则参数非法', 'MODEL_BINDING_INVALID')
         vector = np.linalg.solve(factors.T @ factors + regularization * len(observed) * np.eye(items.shape[1]), factors.T @ values)
-        return items @ vector, 'als:ridge_fold_in'
+        return normalized @ (vector / max(np.linalg.norm(vector), 1e-12)), 'als:ridge_fold_in_cosine'
 
     def _popular_scores(self, mode):
         if 'popular_scores' in self._arrays:

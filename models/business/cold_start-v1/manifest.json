@@ -14,10 +14,10 @@
     "movies.csv": "99f7951a528890bc6ca088b65987790e926adc8f595971346b5b606e4c71454e"
   },
   "artifacts": {
-    "model.npz": "9b7a5e966e07acd224b57c59f735db3422bfe5b1097737536bf6b7dfabfcc326"
+    "model.npz": "0a2b246ab0d9774a840fc387878524dc4e399616b9a00fbdf98c3118afd28f9e"
   },
   "parameters": {
-    "popular_prior": 20.0,
+    "popular_positive_threshold": 4.0,
     "itemcf_neighbors": 80,
     "itemcf_shrinkage": 20.0,
     "positive_threshold": 4.0,

@@ -14,7 +14,7 @@ from recommender.validation import ModelManifest, check_model
 from .core import fit_popular, fit_genres, fit_itemcf
 
 ROOT = Path(__file__).resolve().parents[2]
-PARAMETERS = {'popular_prior': 20.0, 'itemcf_neighbors': 80, 'itemcf_shrinkage': 20.0,
+PARAMETERS = {'popular_positive_threshold': 4.0, 'itemcf_neighbors': 80, 'itemcf_shrinkage': 20.0,
               'positive_threshold': 4.0, 'profile_weight': 'rating-3', 'cold_cf_min_positives': 5,
               'genre_encoding': 'row_l2_normalized_multihot', 'tie_break': 'numeric_movie_id_ascending'}
 
@@ -49,7 +49,7 @@ def train_mode(mode, output_root=ROOT / 'models', *, data=None):
     require(all(mid in catalog and np.isfinite(value) and 0.5 <= value <= 5.0 for _, mid, value in ratings),
             '训练评分含目录外ID或非法数值', 'DATA_IDENTITY_INVALID')
     movies = {row['movie_id']: row['genres'] for row in data.rows('movies.csv')}
-    scores, counts = fit_popular(movie_ids, ratings, prior=PARAMETERS['popular_prior'])
+    scores, counts = fit_popular(movie_ids, ratings, positive_threshold=PARAMETERS['popular_positive_threshold'])
     features, genres = fit_genres(movie_ids, movies)
     neighbors = fit_itemcf(movie_ids, ratings, top_k=PARAMETERS['itemcf_neighbors'], shrinkage=PARAMETERS['itemcf_shrinkage'])
     common = {'movie_ids': np.asarray(movie_ids, dtype=str), 'popular_scores': scores, 'rating_counts': counts}
@@ -59,7 +59,8 @@ def train_mode(mode, output_root=ROOT / 'models', *, data=None):
                           'itemcf': {**common, **cf}, 'cold_start': {**common, **content, **cf}}
     training_name = 'evaluation/train.csv' if mode == 'evaluation' else 'business/history_ratings.csv'
     parameters_by_algorithm = {
-        'popular': {'bayesian_prior_count': PARAMETERS['popular_prior']},
+        'popular': {'ranking': 'positive_support_desc',
+                    'positive_threshold': PARAMETERS['popular_positive_threshold']},
         'content': {'encoding': PARAMETERS['genre_encoding'], 'profile_weight': PARAMETERS['profile_weight']},
         'itemcf': {'neighbors': PARAMETERS['itemcf_neighbors'], 'shrinkage': PARAMETERS['itemcf_shrinkage'],
                    'interaction': 'binary_rating_ge_4', 'similarity': 'cosine_times_cooccurrence_over_cooccurrence_plus_shrinkage',

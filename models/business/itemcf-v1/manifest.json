@@ -13,7 +13,7 @@
     "training-catalog.csv": "3fbb145fdaad3f66e3ca17d0e1c32f385a90c1a465c6a905f17be9fc6a08460c"
   },
   "artifacts": {
-    "model.npz": "98799208da02f54a1bd5c4262ba25834a4acb426d3c925ae404eb0ed16f09b79"
+    "model.npz": "5d691e95192cebe9c33052732b0c02077ec8bd95417c666f2a8fcf5aa5fcabc7"
   },
   "parameters": {
     "neighbors": 80,

@@ -1,0 +1,55 @@
+[
+  {
+    "event": "input_verified",
+    "mode": "business",
+    "ratings": 798775,
+    "movies": 8459,
+    "users": 5000,
+    "utc": "2026-10-20T11:48:48.626182+00:00"
+  },
+  {
+    "event": "spark_model_saved_and_reloaded",
+    "mode": "business",
+    "ratings": 798775,
+    "movies": 8459,
+    "users": 5000,
+    "elapsed_seconds": 31.842,
+    "tool_versions": {
+      "python": "3.12.12",
+      "pyspark": "3.5.7",
+      "spark": "3.5.7",
+      "java": "17.0.20.1",
+      "scala": "2.12.18",
+      "hadoop": "3.3.4",
+      "numpy": "1.26.4",
+      "pydantic": "2.11.7"
+    },
+    "parameters": {
+      "seed": 42,
+      "predictionCol": "prediction",
+      "blockSize": 4096,
+      "rank": 24,
+      "maxIter": 8,
+      "regParam": 0.1,
+      "numUserBlocks": 4,
+      "numItemBlocks": 4,
+      "implicitPrefs": false,
+      "alpha": 1.0,
+      "userCol": "userId",
+      "itemCol": "movieId",
+      "ratingCol": "rating",
+      "nonnegative": false,
+      "checkpointInterval": -1,
+      "intermediateStorageLevel": "MEMORY_AND_DISK",
+      "finalStorageLevel": "MEMORY_AND_DISK",
+      "coldStartStrategy": "nan",
+      "training_ratings": 798775,
+      "training_movies": 8459,
+      "training_users": 5000,
+      "master": "local[2]",
+      "driver_memory": "2g",
+      "input_partitions": 4
+    },
+    "utc": "2026-10-20T11:49:16.276412+00:00"
+  }
+]

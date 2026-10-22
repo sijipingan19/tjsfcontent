@@ -5,7 +5,7 @@ export const ALGORITHM_LABELS: Record<string, string> = {
 }
 /** recall_sources 后端内部字符串 → 可读中文标签（Recommendations/RecommendationList 共用） */
 export const SOURCE_LABELS: Record<string, string> = {
-  'popular:bayesian_rating_support': '热门榜 · 贝叶斯加权评分',
+  'popular:positive_support_rank': '热门榜 · 正反馈支持度排名',
   'popular_fallback:no_positive_profile': '回退热门 · 无正反馈画像',
   'popular_fallback:no_personalized_candidates': '回退热门 · 无个性化候选',
   'content:positive_genre_cosine': '内容推荐 · 正反馈类型余弦',
@@ -13,8 +13,8 @@ export const SOURCE_LABELS: Record<string, string> = {
   'cold_start:itemcf_five_or_more_positive_ratings': '冷启动 · ItemCF(≥5正反馈)',
   'cold_start:content_few_positive_ratings': '冷启动 · 内容画像(少量正反馈)',
   'cold_start:interest_genre_profile': '冷启动 · 兴趣画像',
-  'als:trained_ml_user_factors': 'ALS · 训练好的ML用户因子',
-  'als:ridge_fold_in': 'ALS · Ridge折叠入',
+  'als:trained_user_factor_cosine': 'ALS · 训练用户因子余弦',
+  'als:ridge_fold_in_cosine': 'ALS · Ridge折叠入因子余弦',
   'short_term:recent_interaction': '短期兴趣 · 近期交互',
   'profile:explicit_ratings_ge_4': '画像来源 · 评分≥4',
   'profile:interest_genres': '画像来源 · 用户兴趣类型',
@@ -33,7 +33,7 @@ export const GENRE_LABELS: Record<string, string> = {
 export function genreLabel(g: string): string { return GENRE_LABELS[g] ?? g }
 
 export const ALGORITHM_EXPLANATIONS: Record<string, string> = {
-  popular: '依据训练集的评分与支持度形成热门基线；这不是个性化推荐。',
+  popular: '按训练集正反馈数量（评分≥4）形成热门基线；这不是个性化推荐。',
   content: '使用电影类型特征与用户正反馈构建兴趣画像，按内容相似度排序。',
   itemcf: '从真实训练交互学习电影之间的邻居关系，再根据用户喜欢的电影召回。',
   als: '使用 Spark ALS 学得的电影隐因子与用户画像进行排序；不同算法的分数不能直接比较。',
